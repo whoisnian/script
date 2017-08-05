@@ -1,0 +1,40 @@
+#########################################################################
+# File Name: pastecode.sh
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao2017@gmail.com
+# Created Time: 2017年08月06日 星期日 00时22分18秒
+#########################################################################
+#!/bin/bash
+
+#Default config
+code_poster="anonymous"
+code_type="auto"
+
+if [ -t 0 ]
+then
+	echo "No Content Received"
+	exit
+fi
+
+if [ $# -gt 1 ]
+then
+	if [ $1 = "-t" ]
+	then
+		code_type=$2
+	else
+		code_poster=$2
+	fi
+fi
+
+if [ $# -gt 3 ]
+then
+	if [ $3 = "-t" ]
+	then
+		code_type=$4
+	else
+		code_poster=$4
+	fi
+fi
+
+curl -d "poster=$code_poster&type=$code_type" --data-urlencode content@- "http://paste.whoisnian.com/new.php"
