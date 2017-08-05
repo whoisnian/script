@@ -1,0 +1,49 @@
+#########################################################################
+# File Name: ipgw.sh
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao2017@gmail.com
+# Created Time: 2017年04月07日 星期五 21时58分56秒
+#########################################################################
+#!/bin/bash
+
+# Complete your username and password here
+user_name="yourusername"
+user_pass="password"
+
+# Logout all
+LOGOUT=`curl -s -d "action=logout&ac_id=1&user_ip=&nas_ip=&user_mac=&url=&username=$user_name&password=$user_pass&save_me=0" "https://ipgw.neu.edu.cn/srun_portal_pc.php?ac_id=1&" 2>&1`
+
+# Login as phone
+# LOGIN=`curl -H "Content-type: application/x-www-form-urlencoded" -A "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12A366 Safari/600.1.4" -s -d "action=login&ac_id=1&user_ip=&nas_ip=&user_mac=&url=&username=$user_name&password=$user_pass&save_me=0" "https://ipgw.neu.edu.cn/srun_portal_pc.php?ac_id=1&" 2>&1`
+
+# Login as pc
+LOGIN=`curl -H "Content-type: application/x-www-form-urlencoded" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36" -s -d "action=login&ac_id=1&user_ip=&nas_ip=&user_mac=&url=&username=$user_name&password=$user_pass&save_me=0" "https://ipgw.neu.edu.cn/srun_portal_pc.php?ac_id=1&" 2>&1`
+
+# Get account information
+k=$RANDOM
+INFO=`curl -s -d "action=get_online_info&key=$k" "https://ipgw.neu.edu.cn/include/auth_action.php?k=$k" 2>&1`
+if  [ ! -n "$INFO" ] ;then
+    echo "Connection Failed!"
+else
+    DATA=${INFO%%,*}
+    DATAG=$[$DATA/(1024*1024*1024)]
+    DATAM=$[$DATA%(1024*1024*1024)/(1024*1024)]
+    if [ $DATAG != 0 ];
+    then
+        echo "已用流量：$DATAG GiB $DATAM MiB"
+    else
+        echo "已用流量：$DATAM MiB"
+    fi
+    TEMP=${INFO#*,}
+    TIME=${TEMP%%,*}
+    TIMEH=$[$TIME/(60*60)]
+    TIMEM=$[$TIME%(60*60)/(60)]
+    TIMES=$[$TIME%60]
+    echo "已用时长：$TIMEH:$TIMEM:$TIMES"
+    TEMP=${TEMP#*,}
+    BALANCE=${TEMP%%,*}
+    echo "账户余额：$BALANCE"
+    IP=${INFO##*,}
+    echo "IP地址：$IP"
+fi
