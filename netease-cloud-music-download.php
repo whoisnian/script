@@ -1,4 +1,16 @@
 <?php
+/*************************************************************************
+    > File Name: netease-cloud-music-download.php
+	> Author: nian
+    > Blog: https://whoisnian.com
+    > Mail: zhuchangbao2017@gmail.com
+	> Created Time: 2017年08月05日 星期六 22时49分28秒
+	>
+    > Description: Download songs in netease-cloud-music.
+    > Need: PHP, wget.
+    > Others: You can change the default file name format in line 155.
+    > Website: http://music.whoisnian.com/netease/
+ ************************************************************************/
 
 echo "1.下载单曲。\n";
 echo "2.下载专辑。\n";
