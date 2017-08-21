@@ -2,10 +2,10 @@
 
 ## ipgw
 * `$ chmod 755 ipgw`
-* `$ ipgw`
+* `$ ./ipgw`
 
 ## netease-cloud-music-download.php
-* `$ php netease-cloud-music-download.php`
+* `$ ./netease-cloud-music-download`
 
 ## pastecode
 * `$ chmod 755 pastecode`
