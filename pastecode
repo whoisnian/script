@@ -1,3 +1,4 @@
+#!/bin/bash
 #########################################################################
 # File Name: pastecode.sh
 # Author: nian
@@ -5,7 +6,6 @@
 # Mail: zhuchangbao2017@gmail.com
 # Created Time: 2017年08月06日 星期日 00时22分18秒
 #########################################################################
-#!/bin/bash
 
 #Default config
 code_poster="anonymous"
