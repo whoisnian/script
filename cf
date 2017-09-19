@@ -1,0 +1,74 @@
+#!/bin/php
+<?php
+#########################################################################
+# File Name: cf.php
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao2017@gmail.com
+# Created Time: 2017年09月17日 星期日 23时29分34秒
+#########################################################################
+# 显示：0(默认)、1(粗体/高亮)、22(非粗体)、4(单条下划线)、24(无下划线)、5(闪烁)、25(无闪烁)、7(反显、翻转前景色和背景色)、27(无反显)
+# 颜色：0(黑)、1(红)、2(绿)、 3(黄)、4(蓝)、5(洋红)、6(青)、7(白)
+# 前景色为30+颜色值，如31表示前景色为红色；背景色为40+颜色值，如41表示背景色为红色。
+
+$handle = "yourhandle";
+$interval = 5;
+
+echo "请输入比赛ID：\n";
+fscanf(STDIN, "%s", $id);
+
+if(ctype_digit($id)) {
+	$url = "http://codeforces.com/api/contest.status?contestId=".$id."&handle=".$handle;
+	$flag = true;
+	$num = 1;
+	while($flag) {
+		$flag = false;
+		$json = get_by_curl($url);
+		$submissions = json_decode($json, true);
+		clear();
+		echo "正在进行第".$num++."次查询，当前间隔：".$interval."s\n";
+		foreach($submissions["result"] as $submission) {
+			echo $submission["problem"]["index"]."\t";
+			if(array_key_exists("verdict", $submission)) {
+				if($submission["verdict"] == "WRONG_ANSWER") {
+					echo "\033[1;31;40mWrong Answer\033[0m\n";
+				}
+				else if($submission["verdict"] == "OK"){
+					if($submission["testset"] == "TESTS") {
+						echo "\033[1;32;40mAccepted\033[0m\n";
+					}
+					else if($submission["verdict"] == "PRETESTS") {
+						echo "\033[1;32;40mPretests Passed\033[0m\n";
+						$flag = true;
+					}
+				}
+				else {
+					echo "\033[1;33;40m".$submission["verdict"]."\033[0m\n";
+				}
+			}
+			else {
+				echo "\033[1;34;40mPending\033[0m\n";
+				$flag = true;
+			}
+		}
+		if($flag) sleep($interval);
+	}
+}
+else {
+	echo "非法输入！\n";
+	exit();
+}
+
+function clear() {
+	exec("clear", $clear);
+	echo $clear['0'];
+}
+function get_by_curl($url) {
+	$ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+}
+?>
