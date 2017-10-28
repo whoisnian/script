@@ -1,6 +1,7 @@
 # Linux Script
 
 ## ipgw
+* Set your student id and password.
 * `$ chmod 755 ipgw`
 * `$ ./ipgw`
 
