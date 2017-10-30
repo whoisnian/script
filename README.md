@@ -19,3 +19,7 @@
 ## cf
 * Set your handle and query intervel.
 * `$./cf`
+
+## status
+* `$ chmod 755 status`
+* `$ ./status`
