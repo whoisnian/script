@@ -23,3 +23,9 @@
 ## status
 * `$ chmod 755 status`
 * `$ ./status`
+
+## screenchange
+* `$ xrandr --current` and set your screen name.
+* `$ ./screenchange` : use 'intern' and 'extern';
+* `$ ./screenchange 1` : use 'extern';
+* `$ ./screenchange 2` : use 'intern'.
