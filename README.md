@@ -2,14 +2,12 @@
 
 ## ipgw
 * Set your student id and password.
-* `$ chmod 755 ipgw`
 * `$ ./ipgw`
 
 ## netease-cloud-music-download.php
 * `$ ./netease-cloud-music-download`
 
 ## pastecode
-* `$ chmod 755 pastecode`
 * `<command> | pastecode` and get the link. Such as:
   * `$ screenfetch -N | pastecode` (default poster and type)
   * `$ cat nian.css | pastecode -p nian` (only default type)
@@ -21,7 +19,6 @@
 * `$./cf`
 
 ## status
-* `$ chmod 755 status`
 * `$ ./status`
 
 ## screenchange
@@ -29,3 +26,7 @@
 * `$ ./screenchange` : use 'intern' and 'extern';
 * `$ ./screenchange 1` : use 'extern';
 * `$ ./screenchange 2` : use 'intern'.
+
+## bingwallpaper
+* Set your own directory.
+* `$ ./bingwallpaper`

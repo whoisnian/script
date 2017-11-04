@@ -1,0 +1,19 @@
+#!/bin/bash
+#########################################################################
+# File Name: bingwallpaper.sh
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao2017@gmail.com
+# Created Time: 2017年11月05日 星期日 00时20分12秒
+#########################################################################
+
+# Set your own directory
+DIR="/home/nian/.wallpaper/"
+
+# Download by curl and save as "20171105.jpg"
+JSON=$(curl -s 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
+DATE=$(echo ${JSON} | grep -Po '"enddate":"\K[^"]+')
+URL=$(echo ${JSON} | grep -Po '"url":"\K[^"]+')
+URL="www.bing.com"$URL
+
+curl "$URL" -s -o "$DIR$DATE.jpg"
