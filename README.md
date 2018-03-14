@@ -30,3 +30,7 @@
 ## bingwallpaper
 * Set your own directory.
 * `$ ./bingwallpaper`
+
+## masm
+* Set your own dosbox directory.
+* `$ ./masm` OR `$ ./masm hello.asm`
