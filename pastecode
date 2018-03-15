@@ -37,4 +37,4 @@ then
 	fi
 fi
 
-curl -d "poster=$code_poster&type=$code_type" --data-urlencode content@- "http://paste.whoisnian.com/new.php"
+curl -d "poster=$code_poster&type=$code_type" --data-urlencode content@- -L "http://paste.whoisnian.com/new.php" --post301
