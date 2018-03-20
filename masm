@@ -15,5 +15,5 @@ then
     basename=`basename -s .asm $1`
     dosbox -c "mount C: $dir" -c 'path %path%;C:\tools\' -c 'C:' -c "masm $1,$basename.obj;" -c "link $basename.obj,$basename.exe;" -c "$basename.exe" -c "pause" -c "exit"
 else
-    dosbox -c "mount C: $dir" -c 'path %path%;C:\tools\' -c 'C:' -c 'cwsdpmi' -c 'cls'
+    dosbox -c "mount C: $dir" -c 'path %path%;C:\tools\' -c 'C:' -c 'cls'
 fi
