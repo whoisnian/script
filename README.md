@@ -34,3 +34,6 @@
 ## masm
 * Set your own dosbox directory.
 * `$ ./masm` OR `$ ./masm hello.asm`
+
+## motd.sh
+* `$ sudo cp ./motd.sh /etc/profile.d/`
