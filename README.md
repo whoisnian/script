@@ -37,3 +37,6 @@
 
 ## motd.sh
 * `$ sudo cp ./motd.sh /etc/profile.d/`
+
+## togif
+* `$ togif example.flv example.gif`
