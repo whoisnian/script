@@ -3,7 +3,7 @@
 # File Name: motd.sh
 # Author: nian
 # Blog: https://whoisnian.com
-# Mail: zhuchangbao2017@gmail.com
+# Mail: zhuchangbao1998@gmail.com
 # Created Time: 2018年06月21日 星期四 13时57分24秒
 #########################################################################
 
