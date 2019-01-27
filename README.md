@@ -40,3 +40,7 @@
 
 ## togif
 * `$ togif example.flv example.gif`
+
+## nian.sh
+* `$ source nian.sh`
+* `$ source nian.sh up`
