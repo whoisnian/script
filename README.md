@@ -39,8 +39,16 @@
 * `$ sudo cp ./motd.sh /etc/profile.d/`
 
 ## togif
-* `$ togif example.flv example.gif`
+* `$ ./togif example.flv example.gif`
 
 ## nian.sh
 * `$ source nian.sh`
 * `$ source nian.sh up`
+
+## cert
+* `$ ./cert`
+* `$ sudo cp server.key /etc/httpd/conf`
+* `$ sudo chmod 400 /etc/httpd/conf/server.key`
+* `$ sudo cp server.crt /etc/httpd/conf`
+* Configure your apache or nginx.
+* Import `ca.crt` to your browser and system.

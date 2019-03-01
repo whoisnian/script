@@ -1,0 +1,19 @@
+#!/bin/bash
+#########################################################################
+# File Name: cert.sh
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao1998@gmail.com
+# Created Time: 2019年03月01日 星期五 12时33分53秒
+#########################################################################
+
+# 生成CA证书
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out ca.key
+openssl req -new -x509 -days 1095 -key ca.key -out ca.crt -subj "/C=CN/ST=China/L=China/O=Local CA/OU=Local CA/CN=Local CA"
+
+# 生成服务端私钥和证书请求
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out server.key
+openssl req -new -key server.key -out server.req -subj "/C=CN/ST=China/L=China/O=localhost/OU=localhost/CN=localhost"
+
+# 通过CA签发证书
+openssl x509 -req -days 1095 -in server.req -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -extfile extFile -extensions ext
