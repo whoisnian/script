@@ -14,6 +14,7 @@ function usage(){
     echo "usage: nian [command]"
     echo "  up\t\tpacman -Syu"
     echo "  pst\t\tstart shadowsocks & privoxy"
+    echo "  ped\t\tend shadowsocks & privoxy"
     echo "  pex\t\texport http_proxy & https_proxy"
     echo "  pun\t\tunset http_proxy & https_proxy"
     echo "  hst\t\tstart httpd & mariadb"
@@ -27,6 +28,16 @@ function update(){
 function proxy_start(){
     echo "Starting shadowsocks & privoxy..."
     sudo systemctl start shadowsocks@$SSCONFIGNAME privoxy
+    kwriteconfig5 --file $HOME/.config/kioslaverc --group "Proxy Settings" --key "ProxyType" 2
+    echo 'user_pref("network.proxy.type", 2);' > $HOME/.mozilla/firefox/*.default/user.js
+    echo "Done."
+}
+
+function proxy_end(){
+    echo "Ending shadowsocks & privoxy..."
+    sudo systemctl stop shadowsocks@$SSCONFIGNAME privoxy
+    kwriteconfig5 --file $HOME/.config/kioslaverc --group "Proxy Settings" --key "ProxyType" 0
+    echo 'user_pref("network.proxy.type", 5);' > $HOME/.mozilla/firefox/*.default/user.js
     echo "Done."
 }
 
@@ -63,6 +74,9 @@ then
     elif [ $1 = "pst" ]
     then
         proxy_start
+    elif [ $1 = "ped" ]
+    then
+        proxy_end
     elif [ $1 = "pex" ]
     then
         proxy_export
