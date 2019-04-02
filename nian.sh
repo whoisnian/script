@@ -56,13 +56,13 @@ function proxy_unset(){
 
 function httpd_start(){
     echo "Starting httpd & mariadb..."
-    sudo systemctl start httpd mariadb
+    sudo systemctl start httpd mariadb php-fpm
     echo "Done."
 }
 
 function httpd_restart(){
     echo "Restarting httpd & mariadb..."
-    sudo systemctl restart httpd mariadb
+    sudo systemctl restart httpd mariadb php-fpm
     echo "Done."
 }
 
