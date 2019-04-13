@@ -52,3 +52,7 @@
 * `$ sudo cp server.crt /etc/httpd/conf`
 * Configure your apache or nginx.
 * Import `ca.crt` to your browser and system.
+
+## yd
+* Install `ydcv` and `kdialog`.
+* `$ ./yd` or `$ ./yd hello`

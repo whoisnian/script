@@ -1,0 +1,25 @@
+#!/bin/bash
+# origin: https://github.com/rocka/dotFiles/blob/master/.local/bin/yd
+
+show_dlg() {
+    sed ':a;N;$!ba;s/\n/<br\/>/g;
+        s/ /\&nbsp;/g;
+        s/\o33\[1m/<font style="font-weight:bold;">/g;
+        s/\o33\[4m/<font style="text-decoration:underline;">/g;
+        s/\o33\[30m/<font style="color:black;">/g;
+        s/\o33\[31m/<font style="color:red;">/g;
+        s/\o33\[32m/<font style="color:green;">/g;
+        s/\o33\[33m/<font style="color:darkorange;">/g;
+        s/\o33\[34m/<font style="color:blue;">/g;
+        s/\o33\[35m/<font style="color:darkorchid;">/g;
+        s/\o33\[36m/<font style="color:lightseagreen;">/g;
+        s/\o33\[37m/<font style="color:grey;">/g;
+        s/\o33\[0m/<\/font>/g' | kdialog --textbox - 640 512
+}
+
+if [ "$1" = "" ]; then
+    ydcv --color always `kdialog --inputbox "Text to translate"` | show_dlg
+else
+    ydcv --color always $1 | show_dlg
+fi
+
