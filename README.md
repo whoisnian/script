@@ -56,3 +56,4 @@
 ## yd
 * Install `ydcv` and `kdialog`.
 * `$ ./yd` or `$ ./yd hello`
+* If you want run `yd` in `$HOME/.bin` with krunner, `echo '#!/bin/bash\nexport PATH=$HOME/.bin:$PATH' > ~/.config/plasma-workspace/env/path.sh`.
