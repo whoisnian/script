@@ -26,8 +26,24 @@ Form_execution=`grep -oP '(?<=name="execution" value=")[^"]*' <<< $LoginForm`
 Form__eventId=`grep -oP '(?<=name="_eventId" value=")[^"]*' <<< $LoginForm`
 
 # Login
-curl -s -k -L -X POST \
+LoginRes=`curl -s -k -L -X POST \
   $Form_action \
   -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
   -b /tmp/ipgw-cookies \
-  -d "rsa=$Form_rsa&ul=$Form_ul&pl=$Form_pl&lt=$Form_lt&execution=$Form_execution&_eventId=$Form__eventId"
+  -d "rsa=$Form_rsa&ul=$Form_ul&pl=$Form_pl&lt=$Form_lt&execution=$Form_execution&_eventId=$Form__eventId"`
+
+if [[ ! $LoginRes =~ "已用流量" ]]
+then
+    echo "Connection Failed!"
+    exit
+fi
+
+# Get account information
+IP=`grep -oP '(?<=当前IP：<span id="user_name" style="float:right;color: #894324;">)[^<]*' <<< $LoginRes`
+DATA=`grep -oP '(?<=已用流量：<span id="balance_in" style="float:right; color: #894324;">)[^<]*' <<< $LoginRes`
+TIME=`grep -oP '(?<=已用时长：<span id="balance_out" style="float:right; color: #894324;">)[^<]*' <<< $LoginRes`
+
+echo "当前帐号：$user_name"
+echo "已用流量：$DATA"
+echo "已用时长：$TIME"
+echo "IP地址：$IP"

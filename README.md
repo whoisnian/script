@@ -1,8 +1,8 @@
 # Linux Script
 
-## ipgw
+## ipgw_new
 * Set your student id and password.
-* `$ ./ipgw`
+* `$ ./ipgw_new`
 
 ## netease-cloud-music-download.php
 * `$ ./netease-cloud-music-download`
