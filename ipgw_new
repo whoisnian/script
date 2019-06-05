@@ -17,7 +17,7 @@ LoginForm=`curl -s -L -X GET \
   -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
   -c /tmp/ipgw-cookies`
 
-Form_action='https://pass.neu.edu.cn'`grep -oP '(?<=id="loginForm" action=")/tpass/login;jsessionid=[^"]*' <<< $LoginForm`
+Form_action='https://pass.neu.edu.cn'`grep -oP '(?<=id="loginForm" action=")/tpass/login[^"]*' <<< $LoginForm`
 Form_lt=`grep -oP '(?<=id="lt" name="lt" value=")[^"]*' <<< $LoginForm`
 Form_rsa=$user_name$user_pass$Form_lt
 Form_ul=${#user_name}
