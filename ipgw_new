@@ -13,9 +13,9 @@ user_pass="password"
 
 # Get Cookie and LoginForm
 LoginForm=`curl -s -L -X GET \
-  http://ipgw.neu.edu.cn/srun_cas.php \
-  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
-  -c /tmp/ipgw-cookies`
+    "http://ipgw.neu.edu.cn/srun_cas.php" \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
+    -c /tmp/ipgw-cookies`
 
 Form_action='https://pass.neu.edu.cn'`grep -oP '(?<=id="loginForm" action=")/tpass/login[^"]*' <<< $LoginForm`
 Form_lt=`grep -oP '(?<=id="lt" name="lt" value=")[^"]*' <<< $LoginForm`
@@ -27,10 +27,10 @@ Form__eventId=`grep -oP '(?<=name="_eventId" value=")[^"]*' <<< $LoginForm`
 
 # Login
 LoginRes=`curl -s -k -L -X POST \
-  $Form_action \
-  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
-  -b /tmp/ipgw-cookies \
-  -d "rsa=$Form_rsa&ul=$Form_ul&pl=$Form_pl&lt=$Form_lt&execution=$Form_execution&_eventId=$Form__eventId"`
+    $Form_action \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
+    -b /tmp/ipgw-cookies \
+    -d "rsa=$Form_rsa&ul=$Form_ul&pl=$Form_pl&lt=$Form_lt&execution=$Form_execution&_eventId=$Form__eventId"`
 
 if [[ ! $LoginRes =~ "已用流量" ]]
 then
@@ -39,11 +39,36 @@ then
 fi
 
 # Get account information
-IP=`grep -oP '(?<=当前IP：<span id="user_name" style="float:right;color: #894324;">)[^<]*' <<< $LoginRes`
-DATA=`grep -oP '(?<=已用流量：<span id="balance_in" style="float:right; color: #894324;">)[^<]*' <<< $LoginRes`
-TIME=`grep -oP '(?<=已用时长：<span id="balance_out" style="float:right; color: #894324;">)[^<]*' <<< $LoginRes`
+k=$RANDOM
+INFO=`curl -s -L -X POST \
+    "http://ipgw.neu.edu.cn/include/auth_action.php?k=$k" \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' \
+    -b /tmp/ipgw-cookies \
+    -d "action=get_online_info&key=$k"`
 
-echo "当前帐号：$user_name"
-echo "已用流量：$DATA"
-echo "已用时长：$TIME"
-echo "IP地址：$IP"
+if  [ ! -n "$INFO" ] ;then
+    echo "Connection Failed!"
+    exit
+else
+    DATA=${INFO%%,*}
+    DATAG=$[$DATA/(1024*1024*1024)]
+    DATAM=$[$DATA%(1024*1024*1024)/(1024*1024)]
+    if [ $DATAG != 0 ];
+    then
+        echo "已用流量：$DATAG GiB $DATAM MiB"
+    else
+        echo "已用流量：$DATAM MiB"
+    fi
+    TEMP=${INFO#*,}
+    TIME=${TEMP%%,*}
+    TIMEH=$[$TIME/(60*60)]
+    TIMEM=$[$TIME%(60*60)/(60)]
+    TIMES=$[$TIME%60]
+    echo "已用时长：$TIMEH:$TIMEM:$TIMES"
+    TEMP=${TEMP#*,}
+    BALANCE=${TEMP%%,*}
+    echo "账户余额：$BALANCE"
+    IP=${INFO##*,}
+    echo "IPv4地址：$IP"
+fi
+
