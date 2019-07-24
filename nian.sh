@@ -8,6 +8,7 @@
 #########################################################################
 
 SSCONFIGNAME=""
+TRANCONFIGNAME=""
 PRIVOXYADDRESS="http://127.0.0.1:8118"
 
 function usage(){
@@ -17,6 +18,8 @@ function usage(){
     echo "  ped\t\tend shadowsocks & privoxy"
     echo "  pex\t\texport http_proxy & https_proxy"
     echo "  pun\t\tunset http_proxy & https_proxy"
+    echo "  tst\t\tstart transparent proxy"
+    echo "  ted\t\tend transparent proxy"
     echo "  hst\t\tstart httpd & mariadb"
     echo "  hre\t\trestart httpd & mariadb"
 }
@@ -45,12 +48,30 @@ function proxy_export(){
     echo "Starting export http_proxy & https_proxy..."
     export http_proxy=$PRIVOXYADDRESS
     export https_proxy=$PRIVOXYADDRESS
+    export HTTP_PROXY=$PRIVOXYADDRESS
+    export HTTPS_PROXY=$PRIVOXYADDRESS
     echo "Done."
 }
 
 function proxy_unset(){
     echo "Starting unset http_proxy & https_proxy..."
-    unset http_proxy https_proxy
+    unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+    echo "Done."
+}
+
+function transparent_start(){
+    echo "Starting transparent proxy..."
+    sudo systemctl start shadowsocks-auto-redir@$TRANCONFIGNAME
+    sudo sed -i 's|default|dnsmasq|g' /etc/NetworkManager/NetworkManager.conf
+    sudo systemctl restart NetworkManager
+    echo "Done."
+}
+
+function transparent_end(){
+    echo "Ending transparent proxy..."
+    sudo systemctl stop shadowsocks-auto-redir@$TRANCONFIGNAME
+    sudo sed -i 's|dnsmasq|default|g' /etc/NetworkManager/NetworkManager.conf
+    sudo systemctl restart NetworkManager
     echo "Done."
 }
 
@@ -83,6 +104,12 @@ then
     elif [ $1 = "pun" ]
     then
         proxy_unset
+    elif [ $1 = "tst" ]
+    then
+        transparent_start
+    elif [ $1 = "ted" ]
+    then
+        transparent_end
     elif [ $1 = "hst" ]
     then
         httpd_start
