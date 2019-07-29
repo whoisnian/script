@@ -17,9 +17,9 @@ show_dlg() {
         s/\o33\[0m/<\/font>/g' | kdialog --textbox - 640 512
 }
 
-if [ "$1" = "" ]; then
+if [ "$*" = "" ]; then
     ydcv --color always `kdialog --inputbox "Text to translate"` | show_dlg
 else
-    ydcv --color always $1 | show_dlg
+    ydcv --color always "$*" | show_dlg
 fi
 
