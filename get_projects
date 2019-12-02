@@ -1,0 +1,88 @@
+#!/bin/bash
+#########################################################################
+# File Name: projects.sh
+# Author: nian
+# Blog: https://whoisnian.com
+# Mail: zhuchangbao1998@gmail.com
+# Created Time: 2019年11月25日 星期一 21时03分09秒
+#########################################################################
+# 额外依赖：
+# tesseract 识别验证码
+# jq 解析json
+
+user_name="2016xxxx"
+user_pass="yourpass"
+
+Timestamp=`date +%s`000
+UserInfo='%7B%22userName%22%3A%22'$user_name'%22%2C%22password%22%3A%22'$user_pass'%22%2C%22dateTime%22%3A'$Timestamp'%2C%22random%22%3A%22'$((($RANDOM+10000)%100000))'%22%7D'
+
+# 获取 Cookie
+GetCookie=`curl -s -i -X POST \
+    'http://neu.co.cnki.net/Handler/LoginHandler.ashx' \
+    -d 'action=imgurl'`
+CookieSID=`grep -oP '(?<=Set-Cookie: SID=)[^;]*' <<< $GetCookie`
+CookieSessionId=`grep -oP '(?<=Set-Cookie: ASP.NET_SessionId=)[^;]*' <<< $GetCookie`
+
+LoginRes=''
+LoginSuccess='登录成功'
+while [[ ! $LoginRes =~ $LoginSuccess ]]
+do
+    # 获取验证码
+    GetCheckCodeGif=`curl -s -X GET \
+        'http://neu.co.cnki.net/Handler/LoginHandler.ashx?action=checkcode&0.'$RANDOM \
+        -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+        -o /tmp/cnki-checkcode.gif`
+
+    # 识别验证码
+    CheckCode=`tesseract /tmp/cnki-checkcode.gif stdout 2>/dev/null | tr -d '\000-\040'`
+
+    # 尝试登录
+    LoginRes=`curl -s -X POST \
+        'http://neu.co.cnki.net/Handler/LoginHandler.ashx' \
+        -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+        -d "action=login&userInfo=$UserInfo&yzm=$CheckCode&js=3"`
+done
+# echo $CookieSID
+# echo $CookieSessionId
+# echo $CheckCode
+# echo $LoginRes
+
+# 获取authToken
+GetAuthToken=`curl -s -X POST \
+    'http://neu.co.cnki.net/Handler/UserHandler.ashx' \
+    -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+    -d 'action=GetAuthToken&authToken=&browserInfo='`
+AuthToken=`grep -oP '(?<={"authToken":")[^"]*' <<< $GetAuthToken`
+# echo $AuthToken
+
+# 获取学年信息
+GetYearInfo=`curl -s -X POST \
+    'http://neu.co.cnki.net/Handler/UserHandler.ashx?r=0.'$RANDOM \
+    -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+    -d 'action=GetStudentYearInfo&authToken=&browserInfo='`
+YearInfo=`grep -oP '(?<={"计划编号":)[^,]*' <<< $GetYearInfo`
+# echo $YearInfo
+
+# 获取专业信息
+GetSpecialties=`curl -s -X POST \
+    'http://neu.co.cnki.net/Handler/UserHandler.ashx?r=0.'$RANDOM \
+    -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+    -d "action=GetStudentSpecialties&schoolYear=$YearInfo&authToken=&browserInfo="`
+SPID=`grep -oP '(?<="专业编号":)[^}]*' <<< $GetSpecialties`
+# echo $SPID
+
+# 设置专业信息
+SetSpecialties=`curl -s -X POST \
+    'http://neu.co.cnki.net/Handler/UserHandler.ashx?r=0.'$RANDOM \
+    -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+    -d "action=SetStudentSpecialties&schoolYear=$YearInfo&spid=$SPID&authToken=&browserInfo="`
+
+# 获取毕业设计列表
+Projects=`curl -s -X POST \
+    'http://neu.co.cnki.net/Handler/Project.ashx' \
+    -H "Cookie: SID=$CookieSID; ASP.NET_SessionId=$CookieSessionId" \
+    -d "action=GetStuChoiceProjectsList&page=1&rows=200&authToken=$AuthToken&browserInfo="`
+
+# echo $Projects
+
+jq -c '.rows[] | { "序号": .num, "导师": ."姓名", "题目": ."名称"|sub("(\n.*)+"; "")}' <<< $Projects
