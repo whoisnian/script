@@ -61,3 +61,11 @@
 ## get_projects
 * Set your student id and password.
 * `$ ./ipgw_new`
+
+## transmission.sh/js
+* Set your transmission RPC config in transmission.sh.
+* `crontab -e`  
+  ```
+  1 * * * * bash /yourpath/transmission.sh >> /yourpath/torrent.info
+  2 * * * * node /yourpath/transmission.js torrent.info > /yourpath/index.html
+  ```
