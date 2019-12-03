@@ -13,21 +13,24 @@ const rl = readline.createInterface({
 
 let nameCheck = {};
 let names = [];
-let times = [];
-let dataMap = {};
+let seriesMap = {};
 
 rl.on('line', (line) => {
   const info = JSON.parse(line);
-  times.push(info.requestTime);
   info.arguments.torrents.forEach((torrent) => {
     if(!nameCheck[torrent.name]) {
       nameCheck[torrent.name] = 1;
       names.push(torrent.name);
     }
-    if(!dataMap[torrent.name]) {
-      dataMap[torrent.name] = {};
+    if(!seriesMap[torrent.name]) {
+      seriesMap[torrent.name] = {
+        name: torrent.name,
+        type: 'line',
+        symbolSize: 10,
+        data: [[torrent.addedDate*1000, 0]]
+      };
     }
-    dataMap[torrent.name][info.requestTime] = torrent.uploadRatio;
+    seriesMap[torrent.name].data.push([info.requestTime*1000, torrent.uploadRatio]);
   });
 });
 
@@ -55,23 +58,11 @@ rl.on('close', () => {
   series: [`);
   let i = 0;
   names.forEach((name) => {
-    obj = {
-      name: name,
-      type: 'line',
-      symbolSize: 10,
-      data: []
-    };
-    times.forEach((time) => {
-      arr = [];
-      arr.push(time*1000);
-      arr.push(dataMap[name][time]);
-      obj.data.push(arr);
-    });
     if(i) {
       console.log(',');
     }
     i++;
-    console.log(obj);
+    console.log(seriesMap[name]);
   });
   console.log(`]
 };
