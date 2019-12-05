@@ -1,6 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
 
+const identify = function(torrent) {
+  return torrent.addedDate + "_" + torrent.name + "_" + torrent.totalSize;
+}
+
 if(!process.argv[2]) {
   console.log("No input file!");
   process.exit(-1);
@@ -11,26 +15,26 @@ const rl = readline.createInterface({
   crlfDelay: Infinity
 });
 
-let nameCheck = {};
-let names = [];
+let torrentCheck = {};
+let torrents = [];
 let seriesMap = {};
 
 rl.on('line', (line) => {
   const info = JSON.parse(line);
   info.arguments.torrents.forEach((torrent) => {
-    if(!nameCheck[torrent.name]) {
-      nameCheck[torrent.name] = 1;
-      names.push(torrent.name);
+    if(!torrentCheck[identify(torrent)]) {
+      torrentCheck[identify(torrent)] = 1;
+      torrents.push(identify(torrent));
     }
-    if(!seriesMap[torrent.name]) {
-      seriesMap[torrent.name] = {
+    if(!seriesMap[identify(torrent)]) {
+      seriesMap[identify(torrent)] = {
         name: torrent.name,
         type: 'line',
         symbolSize: 10,
         data: [[torrent.addedDate*1000, 0]]
       };
     }
-    seriesMap[torrent.name].data.push([info.requestTime*1000, torrent.uploadRatio]);
+    seriesMap[identify(torrent)].data.push([info.requestTime*1000, torrent.uploadedEver/torrent.totalSize]);
   });
 });
 
@@ -49,20 +53,15 @@ rl.on('close', () => {
         tooltip: {trigger: 'item', formatter: function(params){d=new Date(params.data[0] +8 *3600000);return params.seriesName+'<br/>'+d.toISOString().substring(0, 16).replace('T', ' ')+' UTC+08:00<br/>'+params.data[1]}},
         xAxis: {type: 'time', boundaryGap: false},
         yAxis: {type: 'value'},
-        dataZoom: [{show: false, start: 0, end: 100},{type: 'inside', start: 0, end: 100}],
-        legend: {
-          show: false,
-          data: `);
-  console.log(names);
-  console.log(`},
-  series: [`);
+        dataZoom: [{show: false, start: 0, end: 100},{type: 'inside', start: 0, end: 100}],`);
+  console.log(`series: [`);
   let i = 0;
-  names.forEach((name) => {
+  torrents.forEach((identification) => {
     if(i) {
       console.log(',');
     }
     i++;
-    console.log(seriesMap[name]);
+    console.log(seriesMap[identification]);
   });
   console.log(`]
 };
