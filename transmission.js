@@ -61,7 +61,7 @@ rl.on('close', () => {
       console.log(',');
     }
     i++;
-    console.log(seriesMap[identification]);
+    console.dir(seriesMap[identification], {'maxArrayLength': null});
   });
   console.log(`]
 };
