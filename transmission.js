@@ -18,6 +18,7 @@ const rl = readline.createInterface({
 let torrentCheck = {};
 let torrents = [];
 let seriesMap = {};
+let timeNow = Date.now();
 
 rl.on('line', (line) => {
   const info = JSON.parse(line);
@@ -31,10 +32,15 @@ rl.on('line', (line) => {
         name: torrent.name,
         type: 'line',
         symbolSize: 10,
-        data: [[torrent.addedDate*1000, 0]]
+        data: []
       };
+      if(timeNow-torrent.addedDate*1000 <= 7*24*60*60*1000) {
+        seriesMap[identify(torrent)].data.push([torrent.addedDate*1000, 0]);
+      }
     }
-    seriesMap[identify(torrent)].data.push([info.requestTime*1000, torrent.uploadedEver/torrent.totalSize]);
+    if(timeNow-info.requestTime*1000 <= 7*24*60*60*1000) {
+      seriesMap[identify(torrent)].data.push([info.requestTime*1000, torrent.uploadedEver/torrent.totalSize]);
+    }
   });
 });
 
@@ -52,8 +58,7 @@ rl.on('close', () => {
       var option = {
         tooltip: {trigger: 'item', formatter: function(params){d=new Date(params.data[0] +8 *3600000);return params.seriesName+'<br/>'+d.toISOString().substring(0, 16).replace('T', ' ')+' UTC+08:00<br/>'+params.data[1]}},
         xAxis: {type: 'time', boundaryGap: false},
-        yAxis: {type: 'value'},
-        dataZoom: [{show: false, start: 0, end: 100},{type: 'inside', start: 0, end: 100}],`);
+        yAxis: {type: 'value'},`);
   console.log(`series: [`);
   let i = 0;
   torrents.forEach((identification) => {
