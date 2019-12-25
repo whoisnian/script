@@ -57,6 +57,7 @@ rl.on('close', () => {
       var myChart = echarts.init(document.getElementById('main'));
       var option = {
         tooltip: {trigger: 'item', formatter: function(params){d=new Date(params.data[0] +8 *3600000);return params.seriesName+'<br/>'+d.toISOString().substring(0, 16).replace('T', ' ')+' UTC+08:00<br/>'+params.data[1]}},
+        dataZoom: [{type: 'slider', xAxisIndex: 0, filterMode: 'empty'}, {type: 'slider', yAxisIndex: 0, filterMode: 'empty'}],
         xAxis: {type: 'time', boundaryGap: false},
         yAxis: {type: 'value'},`);
   console.log(`series: [`);
